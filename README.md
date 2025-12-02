@@ -430,12 +430,7 @@ const formatter = useFormatter(
 );
 
 // 使用示例 - 简单模式（无继承处理）
-const formatter = useFormatter((params) => {
-  return {
-    ...params,
-    processed: true
-  };
-});
+const formatter = useFormatter();
 
 // 使用格式化后的函数
 const formattedResult = formatter({ title: "用户操作" });
