@@ -1,0 +1,91 @@
+{
+  "name": "dom-track-vue",
+  "version": "1.0.0",
+  "description": "Vue3 DOM 跟踪插件，用于监控和记录 DOM 交互行为",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "dev": "vite",
+    "build": "rollup -c --bundleConfigAsCjs",
+    "type-check": "tsc --noEmit",
+    "prepublishOnly": "npm run build && npm run type-check",
+    "lint": "eslint . --ext .ts,.vue",
+    "lint:fix": "eslint . --ext .ts,.vue --fix",
+    "prettier:format": "prettier --write .",
+    "test": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "prepare": "husky install",
+    "lint-staged": "lint-staged"
+  },
+  "lint-staged": {
+    "*.{ts,vue}": [
+      "eslint --fix",
+      "prettier --write"
+    ]
+  },
+  "homepage": "https://github.com/zhy-y/dom-track-vue",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/zhy-y/dom-track-vue"
+  },
+  "bugs": {
+    "url": "https://github.com/zhy-y/dom-track-vue/issues"
+  },
+  "peerDependencies": {
+    "vue": "^3.0.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npx lint-staged"
+    }
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.20.0",
+    "@jd/jdesign-vue": "^2.0.8",
+    "@vueuse/core": "^14.0.0",
+    "lodash-es": "^4.17.21"
+  },
+  "devDependencies": {
+    "@rollup/plugin-babel": "^6.0.0",
+    "@rollup/plugin-commonjs": "^25.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "@rollup/plugin-terser": "^0.4.0",
+    "@rollup/plugin-typescript": "^11.0.0",
+    "@types/lodash-es": "^4.17.0",
+    "@typescript-eslint/eslint-plugin": "^7.0.0",
+    "@typescript-eslint/parser": "^7.0.0",
+    "@vitejs/plugin-vue": "^4.0.0",
+    "@vitest/ui": "^0.34.7",
+    "@vue/eslint-config-typescript": "^12.0.0",
+    "eslint": "^8.0.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-vue": "^9.0.0",
+    "happy-dom": "^9.20.3",
+    "husky": "^8.0.0",
+    "lint-staged": "^14.0.0",
+    "prettier": "^3.6.2",
+    "rollup": "^3.0.0",
+    "rollup-plugin-vue": "^6.0.0",
+    "typescript": "^5.5.4",
+    "vite": "^4.0.0",
+    "vitest": "^0.34.6",
+    "vue": "^3.0.0"
+  },
+  "keywords": [
+    "vue",
+    "vue3",
+    "dom",
+    "tracker",
+    "tracking",
+    "analytics",
+    "directive",
+    "wrapper"
+  ],
+  "author": "zhy-y",
+  "license": "MIT"
+}
