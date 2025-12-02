@@ -65,6 +65,100 @@ app.use(DOMTrack, {
 app.mount("#app");
 ```
 
+## API 文档
+
+### 1. 插件配置选项
+
+| 选项              | 类型     | 必需 | 说明                                     |
+| ----------------- | -------- | ---- | ---------------------------------------- |
+| `delay`            | Number    | 否   | 默认跟踪延迟时间（毫秒），默认为 2000        |
+| `exposedKeys`     | Object   | 否   | 组件暴露键配置，用于获取组件指定 HTML 内容   |
+| `defaultDisabled` | Boolean  | 否   | 默认是否禁用跟踪，默认为 false           |
+| `defaultFormatter` | Function  | 否   | 默认格式化函数，默认为 `(params) => params` |
+| `onTrack`         | Function | 否   | 跟踪数据处理函数，默认输出到控制台       |
+| `getContext`         | Function | 否   | 获取即时上下文信息的函数，默认返回空对象 |
+
+### 2. TrackWrapper 组件属性
+
+| 属性            | 类型          | 必需 | 说明                                 |
+| --------------- | ------------- | ---- | ------------------------------------ |
+| `title`         | Any        | 否   | 跟踪标题                             |
+| `trackEvents`   | String\|Array | 否   | 要跟踪的事件类型                     |
+| `config`        | Object        | 否   | 跟踪配置对象                         |
+| `innerHtmlKeys` | String\|Array | 否   | 自定义 HTML 键名，优先级高于组件键名 |
+
+#### config 配置选项
+
+| 属性        | 类型    | 默认值   | 说明                   |
+| ----------- | ------- | -------- | ---------------------- |
+| `delay`     | Number  | 2000     | 延迟跟踪时间（毫秒）   |
+| `manual`    | Boolean | false    | 是否手动触发跟踪       |
+| `type`      | String  | "dialog" | 跟踪类型               |
+| `deps`      | Array   | []       | 监听的依赖属性         |
+| `immediate` | Boolean | false    | 是否立即跟踪           |
+| `disabled`  | Boolean | false    | 是否禁用跟踪           |
+
+### 3. TrackFormatter 组件属性
+
+| 属性        | 类型     | 默认值 | 说明                     |
+| ----------- | -------- | ------ | ------------------------ |
+| `prefix`    | String   | ""     | 标题前缀                 |
+| `suffix`    | String   | ""     | 标题后缀                 |
+| `formatter` | Function | null   | 自定义格式化函数         |
+
+### 4. TrackConfigProvider 组件属性
+
+| 属性        | 类型     | 默认值 | 说明               |
+| ----------- | -------- | ------ | ------------------ |
+| `fetchConfig` | Function | null   | 异步获取配置的函数 |
+| `config`    | Object   | {}     | 配置对象           |
+
+### 5. domTrack 指令绑定值
+
+| 属性                     | 类型     | 必需 | 说明                   |
+| ------------------------ | -------- | ---- | ---------------------- |
+| `title`                  | Any   | 是   | 跟踪标题               |
+| `content`                | String   | 否   | 跟踪内容               |
+| `type`                   | String   | 是   | 跟踪类型               |
+| `trackOnlyBeforeUnmount` | Boolean  | 否   | 是否仅在组件卸载前跟踪 |
+| `beforeTrack`            | Function | 否   | 自定义跟踪处理函数     |
+
+### 6. trackUser 函数参数
+
+| 参数           | 类型    | 必需 | 说明         |
+| -------------- | ------- | ---- | ------------ |
+| `title`        | Any  | 是   | 跟踪标题     |
+| `content`      | String  | 否   | 跟踪内容     |
+| `type`         | String  | 是   | 跟踪类型     |
+| `arguments`       | Any     | 否   | 其他自定义参数 |
+
+### 7. asyncTrackUser 函数参数
+
+| 参数              | 类型             | 必需 | 说明                            |
+| ----------------- | ---------------- | ---- | ------------------------------- |
+| `title`           | Any           | 否   | 跟踪标题                        |
+| `content`         | String           | 否   | 跟踪内容                        |
+| `contentSelector` | String\|Function | 否   | 内容选择器或获取函数            |
+| `targetRef`       | Object           | 否   | 目标元素引用                    |
+| `delay`           | Number           | 否   | 延迟时间（毫秒），默认 2000     |
+| `type`            | String           | 是   | 跟踪类型          
+| `arguments`       | Any     | 否   | 其他自定义参数 |              |
+
+### 8. useFormatter 钩子函数
+
+`useFormatter` 钩子现在是处理所有格式化需求的统一接口，提供更灵活的格式化能力。
+
+| 参数       | 类型     | 必需 | 说明                |
+| ---------- | -------- | ---- | ------------------- |
+| `formatter` | Function | 否   | 格式化函数，可以是单层函数或接收之前格式化函数的嵌套函数 |
+
+| 返回值        | 类型     | 说明                |
+| ------------- | -------- | ------------------- |
+| `formatter` | Function | 未传入参数则返回父级或初始化时的格式化函数，可用于访问父级格式化逻辑。否则返回组合后的格式化函数 |
+
+
+## 基础用法
+
 ### 单独使用组件
 
 ```vue
@@ -73,25 +167,14 @@ app.mount("#app");
     <!-- 使用 TrackWrapper 包装组件 -->
     <TrackWrapper
       title="用户登录表单"
-      :config="{
-        type: 'form',
-        delay: 500,
-        manual: false,
-        deps: ['formData'],
-      }"
+      :trackEvents="['submit']"
+      :config="{ type: 'form', delay: 500, }"
     >
       <LoginForm />
     </TrackWrapper>
 
-    <!-- 使用标题格式化提供者 -->
-    <TrackFormatter prefix="[用户管理]">
-      <TrackWrapper title="用户列表">
-        <UserList />
-      </TrackWrapper>
-    </TrackFormatter>
-
-    <!-- 使用配置提供者 -->
-    <TrackConfigProvider :config="{ disabled: false }">
+    <!-- 使用全局配置开关 -->
+    <TrackConfigProvider :config="{ disabled }">
       <TrackWrapper title="动态内容">
         <DynamicContent />
       </TrackWrapper>
@@ -202,97 +285,6 @@ import {
 } from "dom-track-vue";
 ```
 
-## API 文档
-
-### 1. 插件配置选项
-
-| 选项              | 类型     | 必需 | 说明                                     |
-| ----------------- | -------- | ---- | ---------------------------------------- |
-| `delay`            | Number    | 否   | 默认跟踪延迟时间（毫秒），默认为 2000        |
-| `exposedKeys`     | Object   | 否   | 组件暴露键配置，用于获取组件指定 HTML 内容   |
-| `defaultDisabled` | Boolean  | 否   | 默认是否禁用跟踪，默认为 false           |
-| `defaultFormatter` | Function  | 否   | 默认格式化函数，默认为 `(params) => params` |
-| `onTrack`         | Function | 否   | 跟踪数据处理函数，默认输出到控制台       |
-| `getContext`         | Function | 否   | 获取即时上下文信息的函数，默认返回空对象 |
-
-### 2. TrackWrapper 组件属性
-
-| 属性            | 类型          | 必需 | 说明                                 |
-| --------------- | ------------- | ---- | ------------------------------------ |
-| `title`         | Any        | 否   | 跟踪标题                             |
-| `trackEvents`   | String\|Array | 否   | 要跟踪的事件类型                     |
-| `config`        | Object        | 否   | 跟踪配置对象                         |
-| `innerHtmlKeys` | String\|Array | 否   | 自定义 HTML 键名，优先级高于组件键名 |
-
-#### config 配置选项
-
-| 属性        | 类型    | 默认值   | 说明                   |
-| ----------- | ------- | -------- | ---------------------- |
-| `delay`     | Number  | 2000     | 延迟跟踪时间（毫秒）   |
-| `manual`    | Boolean | false    | 是否手动触发跟踪       |
-| `type`      | String  | "dialog" | 跟踪类型               |
-| `deps`      | Array   | []       | 监听的依赖属性         |
-| `immediate` | Boolean | false    | 是否立即跟踪           |
-| `disabled`  | Boolean | false    | 是否禁用跟踪           |
-
-### 3. TrackFormatter 组件属性
-
-| 属性        | 类型     | 默认值 | 说明                     |
-| ----------- | -------- | ------ | ------------------------ |
-| `prefix`    | String   | ""     | 标题前缀                 |
-| `suffix`    | String   | ""     | 标题后缀                 |
-| `formatter` | Function | null   | 自定义格式化函数         |
-
-### 4. TrackConfigProvider 组件属性
-
-| 属性        | 类型     | 默认值 | 说明               |
-| ----------- | -------- | ------ | ------------------ |
-| `fetchConfig` | Function | null   | 异步获取配置的函数 |
-| `config`    | Object   | {}     | 配置对象           |
-
-### 5. domTrack 指令绑定值
-
-| 属性                     | 类型     | 必需 | 说明                   |
-| ------------------------ | -------- | ---- | ---------------------- |
-| `title`                  | Any   | 是   | 跟踪标题               |
-| `content`                | String   | 否   | 跟踪内容               |
-| `type`                   | String   | 是   | 跟踪类型               |
-| `trackOnlyBeforeUnmount` | Boolean  | 否   | 是否仅在组件卸载前跟踪 |
-| `beforeTrack`            | Function | 否   | 自定义跟踪处理函数     |
-
-### 6. trackUser 函数参数
-
-| 参数           | 类型    | 必需 | 说明         |
-| -------------- | ------- | ---- | ------------ |
-| `title`        | Any  | 是   | 跟踪标题     |
-| `content`      | String  | 否   | 跟踪内容     |
-| `type`         | String  | 是   | 跟踪类型     |
-| `arguments`       | Any     | 否   | 其他自定义参数 |
-
-### 7. asyncTrackUser 函数参数
-
-| 参数              | 类型             | 必需 | 说明                            |
-| ----------------- | ---------------- | ---- | ------------------------------- |
-| `title`           | Any           | 否   | 跟踪标题                        |
-| `content`         | String           | 否   | 跟踪内容                        |
-| `contentSelector` | String\|Function | 否   | 内容选择器或获取函数            |
-| `targetRef`       | Object           | 否   | 目标元素引用                    |
-| `delay`           | Number           | 否   | 延迟时间（毫秒），默认 2000     |
-| `type`            | String           | 是   | 跟踪类型          
-| `arguments`       | Any     | 否   | 其他自定义参数 |              |
-
-### 6. useFormatter 钩子函数
-
-`useFormatter` 钩子现在是处理所有格式化需求的统一接口，提供更灵活的格式化能力。
-
-| 参数       | 类型     | 必需 | 说明                |
-| ---------- | -------- | ---- | ------------------- |
-| `formatter` | Function | 否   | 格式化函数，可以是单层函数或接收之前格式化函数的嵌套函数 |
-
-| 返回值        | 类型     | 说明                |
-| ------------- | -------- | ------------------- |
-| `formatter` | Function | 未传入参数则返回父级或初始化时的格式化函数，可用于访问父级格式化逻辑。否则返回组合后的格式化函数 |
-
 ## 高级用法
 
 ### 1. 层级化标题格式化
@@ -303,19 +295,20 @@ import {
   <TrackFormatter formatter="customFormatter">
     <UserPage />
   </TrackFormatter>
-  <TrackFormatter prefix="[用户管理]" suffix=" - 管理系统">
-    <UserPage />
+  <!-- 使用标题格式化提供者 -->
+  <TrackFormatter prefix="customPrefix" suffix="customSuffix">
+    <TrackWrapper title="用户列表">
+      <UserList />
+    </TrackWrapper>
   </TrackFormatter>
 </template>
 
 <!-- 子组件自动继承格式化 -->
 <template>
-  <div>
-    <TrackWrapper title="用户列表">
-      <!-- 跟踪标题会变成: [用户管理] 用户列表 - 管理系统 -->
-      <UserList />
-    </TrackWrapper>
-  </div>
+  <TrackWrapper title="用户列表">
+    <!-- 跟踪标题会变成: customPrefix 用户列表 customSuffix -->
+    <UserList />
+  </TrackWrapper>
 </template>
 ```
 
