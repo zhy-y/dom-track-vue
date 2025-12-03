@@ -362,9 +362,9 @@ import { ref } from "vue";
 const currentProject = ref("项目A");
 
 // 使用useFormatter钩子提供格式化功能
-const formatTitle = useFormatter((title) => {
-  return `[仪表板|${currentProject.value}] ${title}`;
-});
+const formatTitle = useFormatter(() => 
+  return (title) => `[仪表板|${currentProject.value}] ${title}`;
+);
 
 // 使用格式化函数
 const formattedTitle = formatTitle("用户操作"); // 输出: [仪表板|项目A] 用户操作
@@ -383,7 +383,9 @@ const formattedTitle = formatTitle("用户操作"); // 输出: [仪表板|项目
 import { useFormatter } from "dom-track-vue";
 
 // 设置根级别格式化
-useFormatter((title) => `[应用级别] ${title}`);
+useFormatter((preFormatter) => {
+  return (title) => preFormatter(`[应用级别] ${title}`)
+});
 </script>
 
 <!-- ParentComponent.vue -->
