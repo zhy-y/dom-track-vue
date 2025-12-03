@@ -4,11 +4,11 @@ import { getFormatterByComponent } from './utils'
 import { TitleFormatter, domTrackDirective } from './types'
 
 export const domTrack: domTrackDirective = {
-  mounted(el, binding) {
+  mounted(el, binding, vnode) {
     const { disabled, title } = binding.value || {}
     if (disabled) return
 
-    const formatter = getFormatterByComponent(el) as TitleFormatter<any>
+    const formatter = getFormatterByComponent(el, vnode) as TitleFormatter<any>
     const formattedParams = formatter(title)
 
     // 先存储格式化后的params，后续beforeUnmount时使用。避免unmounted时 params 被更新

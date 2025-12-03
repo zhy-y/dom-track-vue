@@ -1,3 +1,4 @@
+import { VNode } from 'vue'
 import { TRACK_PARAMS_KEY } from './constants'
 import trackManager from './track-core'
 import { TitleFormatter } from './types'
@@ -26,13 +27,8 @@ interface VueComponentInstance {
  * @param element - DOM元素
  * @returns 组件实例或null
  */
-const getComponentInstance = (element: Element | HTMLElement): VueComponentInstance | null => {
-  return (
-    (element as any).__vueParentComponent || // Vue 3.x
-    (element as any).__vue__ || // Vue 2.x
-    ((element as any)._vnode && (element as any)._vnode.component) || // 其他可能
-    null
-  )
+const getComponentInstance = (vnode: VNode): VueComponentInstance | null => {
+  return (vnode as any).component || (vnode as any).ctx || null
 }
 
 /**
@@ -65,12 +61,12 @@ const getFormatterFromComponent = (component: VueComponentInstance): TitleFormat
  * @param el - DOM元素
  * @returns 格式化函数
  */
-export function getFormatterByComponent(el: Element | HTMLElement): TitleFormatter<unknown> {
+export function getFormatterByComponent(el: Element | HTMLElement, vnode: VNode): TitleFormatter<unknown> {
   try {
     // 向上遍历DOM树，查找组件实例和格式化函数
     let currentEl: Element | HTMLElement = el
     while (currentEl && currentEl !== document.body) {
-      const component = getComponentInstance(currentEl)
+      const component = getComponentInstance(vnode)
       if (component) {
         const formatter = getFormatterFromComponent(component)
         if (formatter) {
