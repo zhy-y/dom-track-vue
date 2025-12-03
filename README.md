@@ -47,7 +47,7 @@ app.use(DOMTrack, {
     // fetch('/api/track', { method: 'POST', body: data })
   },
   // 获取即时上下文信息
-  context: () => ({
+  getContext: () => ({
     timestamp: Date.now(),
     userId: "userId",
   }),
