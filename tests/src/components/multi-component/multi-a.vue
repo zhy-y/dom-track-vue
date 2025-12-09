@@ -12,13 +12,19 @@
 
   <button
     v-dom-track="{
-      title: '子组件A-指令',
+      title: '动态显示-unmounted',
       type: 'directive-a',
     }"
     @click="handleClick"
   >
     子组件A指令按钮 - 点击后 count: {{ count }}
   </button>
+  <div
+    v-if="count % 2 === 0"
+    v-dom-track="{ title: '子组件A-指令', type: 'directive-a', trackOnlyBeforeUnmount: true }"
+  >
+    显示 {{ count }}
+  </div>
 </template>
 <script setup lang="ts">
 import { ref } from 'vue'
