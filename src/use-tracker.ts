@@ -5,6 +5,7 @@ import { TrackUserParams, AsyncTrackUserParams } from './types'
  * 直接跟踪用户行为
  */
 export const trackUser = (params: TrackUserParams): void => {
+  if (trackManager.disabled) return
   trackManager.onTrack({ ...trackManager.getContext(), ...params })
 }
 
