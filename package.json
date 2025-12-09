@@ -1,6 +1,6 @@
 {
   "name": "dom-track-vue",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Vue3 DOM 跟踪插件，用于监控和记录 DOM 交互行为",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",

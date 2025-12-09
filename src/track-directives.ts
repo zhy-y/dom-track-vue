@@ -24,6 +24,7 @@ export const domTrack: domTrackDirective = {
         })
       } else {
         if (trackOnlyBeforeUnmount) return
+        el._formattedParams = formattedParams
         trackUser({
           type,
           title: formattedParams,
