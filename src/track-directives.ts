@@ -23,7 +23,6 @@ export const domTrack: domTrackDirective = {
           trackUser({ title, content: _content || content || '', type })
         })
       } else {
-        el._formattedParams = formattedParams
         if (trackOnlyBeforeUnmount) return
         trackUser({
           type,
